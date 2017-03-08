@@ -96,9 +96,9 @@ pe_setups = []
 
 # Start heating
 
-datatable = "data2017-02-23"
-int_start = [0, 5000, 10000, 15000, 20000, 25000,30000, 60000, 65000, 70000, 75000, 80000]
-int_end = [4999, 9999, 14999, 19999, 24999, 29999, 35000, 64999, 69999, 74999, 79999, 84999]
+datatable = "data2017-03-04"
+int_start = [0, 5000, 10000, 15000, 20000, 25000]#, 30000, 35000]# #[45000,50000,55000,60000, 65000, 70000, 75000, 80000]##[0, 400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800, 5200, 5600, 6000]
+int_end = [4999, 9999, 14999, 19999, 24999, 26999]#, 34999, 39999] # #[49999, 54999, 59999, 64999, 69999, 74999, 79999, 86000] ##[399, 799, 1199, 1599, 1999, 2399, 2700, 3199, 3599, 3999, 4399, 4799, 5199, 5599, 5999, 6399]
 int_step = 5
 
 data = pd.read_table("data_storage/"+ datatable + ".csv", \
@@ -170,8 +170,8 @@ for k,e in enumerate(int_start):
 
 ##fuer multiparameter
 mpe = cp.pe.MultiLSq(pe_setups)
-# # mpe.run_parameter_estimation({"linear_solver": "ma57"})
-mpe.run_parameter_estimation()
+mpe.run_parameter_estimation({"linear_solver": "ma57"})
+# mpe.run_parameter_estimation()
 
 # sim_est = cp.sim.Simulation(system = system, pdata = est_parameter)
 sim_est = cp.sim.Simulation(system = system, pdata = mpe.estimated_parameters)
