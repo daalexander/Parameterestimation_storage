@@ -61,7 +61,7 @@ m = 2000.0 / layer
 
 ##Massflows storage
 #first Layer
-dotT0 = 1.0/m * (V_PSOS * TSOS - msto * TSH0 - (m0plus + V_PSOS - msto) * TSH0 + m0plus * TSH2 - (alpha_0 * (TSH0 - Tamb)) / cp_water) 
+dotT0 = 1.0/m * (V_PSOS * TSOS - msto * TSH0 - (m0plus + V_PSOS - msto) * TSH0 + m0plus * TSH2 - (alpha_0 * (TSH0 - Tamb)) / cp_water)  + alpha_iso
 #m0minus = m0plus + V_PSOS - msto 
 
 #second Layer
@@ -71,12 +71,12 @@ dotT2 = 1.0/m * ( -V_PSOS * VSHP_OP * TSH2 + msto * VSHS_OP * TCO_1 + (m0plus + 
 
 #third Layer
 dotT3 = 1.0/m * ((-V_PSOS * VSHP_OP + V_PSOS - msto + msto*VSHS_OP + m2plus) * TSH2 - m2plus * TSH3 \
-    - (-V_PSOS * VSHP_OP + V_PSOS - msto + msto * VSHS_OP  + m3plus) * TSH3 + m3plus * TSH1 - (alpha_3 * (TSH3 - Tamb)) / cp_water)
-#m3minus = -V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP  +m3plus
+    - (-V_PSOS * VSHP_OP + V_PSOS - msto + msto * VSHS_OP  + m2plus) * TSH3 + m2plus * TSH1 - (alpha_3 * (TSH3 - Tamb)) / cp_water)
+#m3minus = -V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP  +m3plus## m3minus ist m2minus und m3plus ist m2plus
 
 #fourth Layer
-dotT1 = 1.0/m * (-V_PSOS * VSHP_CL * TSH1 + (-V_PSOS * VSHP_OP + V_PSOS - msto + msto * VSHS_OP  + m3plus) * TSH3 \
-    - m3plus * TSH1 + msto * VSHS_CL * TCO_1 - (alpha_1 * (TSH1 - Tamb)) / cp_water)
+dotT1 = 1.0/m * (-V_PSOS * VSHP_CL * TSH1 + (-V_PSOS * VSHP_OP + V_PSOS - msto + msto * VSHS_OP  + m2plus) * TSH3 \
+    - m2plus * TSH1 + msto * VSHS_CL * TCO_1 - (alpha_1 * (TSH1 - Tamb)) / cp_water)
 #=================================================================================================================================================
 
 
