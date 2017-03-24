@@ -72,7 +72,7 @@ m = 2000.0 / layer
 
 #=================================================================================================================================================
 #first Layer
-dotT0 = 1.0/m * (V_PSOS * TSOS - msto * TSH0 - (m0plus + V_PSOS - msto) * TSH0 + m0plus * TSH0_5 - (alpha_0 * (TSH0 - Tamb)) / cp_water) + alpha_iso
+dotT0 = 1.0/m * (V_PSOS * TSOS - msto * TSH0 - (m0plus + V_PSOS - msto) * TSH0 + m0plus * TSH0_5 - (alpha_0 * (TSH0 - Tamb)) / cp_water) 
 #m0minus = (m0plus + V_PSOS - msto) 
 
 #layer1.5
