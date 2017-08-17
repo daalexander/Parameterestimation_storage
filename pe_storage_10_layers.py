@@ -7,18 +7,9 @@ import casiopeia as cp
 
 # Constants
 
-cp_water = 4182.0 ##   evtl. 4200
+cp_water = 4182.0 
 layer = 10.0
 Tamb = 20.0
-Tfloor = 18.0
-layer_surface = 0.9503 
-storage_height = 2.38
-storage_scope = 3.4558
-floor_surface = 0.9503
-storage_top_surface = 0.9503
-alpha_water = 100.0
-
-storage_surface = (storage_scope * (storage_height / layer) )
 
 # States
 
@@ -37,36 +28,30 @@ TSH3_2  = x[9]
 
 # Parameters
 
-p = ca.MX.sym("p", 2)
-alpha_sto = p[0]
-alpha_floor = p[1]
-# alpha_0 = p[0]
-# alpha_2 = p[1]
-# alpha_3 = p[2]
-# alpha_1 = p[3]
-# alpha_0_1 = p[4]
-# alpha_0_2 = p[5]
-# alpha_2_1 = p[6]
-# alpha_2_2 = p[4]
-# alpha_3_1 = p[5]
-# alpha_3_2 = p[6]
+p = ca.MX.sym("p", 10)
+alpha_0 = p[0]
+alpha_2 = p[1]
+alpha_3 = p[2]
+alpha_1 = p[3]
+alpha_0_1 = p[4]
+alpha_0_2 = p[5]
+alpha_2_1 = p[6]
+alpha_2_2 = p[4]
+alpha_3_1 = p[5]
+alpha_3_2 = p[6]
 
-alpha_sto_init = 1.0
-alpha_floor_init = 1.0
-# alpha_0_init = 1.0
-# alpha_2_init = 1.0
-# alpha_3_init = 1.0
-# alpha_1_init = 1.0
-# alpha_0_1_init = 1.0
-# alpha_0_2_init = 1.0
-# alpha_2_1_init = 1.0
-# alpha_2_2_init = 1.0
-# alpha_3_1_init = 1.0
-# alpha_3_2_init = 1.0
-# pinit = ca.vertcat([alpha_0_init, alpha_2_init, alpha_3_init, alpha_1_init, alpha_0_1_init, alpha_0_2_init, alpha_2_1_init, alpha_2_2_init, \
-#     alpha_3_1_init, alpha_3_2_init]) 
-pinit = ca.vertcat([alpha_sto_init, alpha_floor_init])
-
+alpha_0_init = 1.0
+alpha_2_init = 1.0
+alpha_3_init = 1.0
+alpha_1_init = 1.0
+alpha_0_1_init = 1.0
+alpha_0_2_init = 1.0
+alpha_2_1_init = 1.0
+alpha_2_2_init = 1.0
+alpha_3_1_init = 1.0
+alpha_3_2_init = 1.0
+pinit = ca.vertcat([alpha_0_init, alpha_2_init, alpha_3_init, alpha_1_init, alpha_0_1_init, alpha_0_2_init, alpha_2_1_init, alpha_2_2_init, \
+    alpha_3_1_init, alpha_3_2_init]) 
 
 
 # Controls
@@ -90,80 +75,52 @@ VSHS_CL = u[13]
 
 
 
-
 m = 2000.0 / layer
 
 # Massflows storage
 
 #=================================================================================================================================================
 #first Layer
-dotT0 = 1.0/m * (V_PSOS * TSOS - msto * TSH0 - (m0plus + V_PSOS - msto) * TSH0 + m0plus * TSH0_1 \
-    - (alpha_sto * (storage_surface + storage_top_surface) * (TSH0 - Tamb)) / cp_water \
-    - (alpha_water * layer_surface * (TSH0 - TSH0_1)) /cp_water) 
+dotT0 = 1.0/m * (V_PSOS * TSOS - msto * TSH0 - (m0plus + V_PSOS - msto) * TSH0 + m0plus * TSH0_1 - (alpha_0 * (TSH0 - Tamb)) / cp_water) 
 #m0minus = (m0plus + V_PSOS - msto) 
 
 #layer1.1
 dotT0_1 = 1.0/m * ((m0plus + V_PSOS - msto) * TSH0 - m0plus * TSH0_1 - (m0plus + V_PSOS - msto) * TSH0_1 + m0plus * TSH0_2 \
-    - (alpha_sto * storage_surface * (TSH0_1 - Tamb)) / cp_water \
-    + (alpha_water * layer_surface * (TSH0 - TSH0_1)) /cp_water \
-    - (alpha_water * layer_surface * (TSH0_1 - TSH0_2)) /cp_water)
+    - (alpha_0_1 * (TSH0_1 - Tamb)) / cp_water)
 
 #layer1.2
 dotT0_2 = 1.0/m * ((m0plus + V_PSOS - msto) * TSH0_1 - m0plus * TSH0_2 - (m0plus + V_PSOS - msto) * TSH0_2 + m0plus * TSH2 \
-    - (alpha_sto * storage_surface * (TSH0_2 - Tamb)) / cp_water \
-    + (alpha_water * layer_surface * (TSH0_1 - TSH0_2)) /cp_water \
-    - (alpha_water * layer_surface * (TSH0_2 - TSH2)) /cp_water) 
+    - (alpha_0_2 * (TSH0_2 - Tamb)) / cp_water)
 
 #second Layer
 dotT2 = 1.0/m * ( -V_PSOS * VSHP_OP * TSH2 + msto * VSHS_OP * TCO_1 + (m0plus + V_PSOS - msto) * TSH0_2 - m0plus * TSH2  \
-    - (-V_PSOS * VSHP_OP + V_PSOS - msto + msto * VSHS_OP + m2plus) * TSH2 + m2plus * TSH2_1 \
-    - (alpha_sto * storage_surface * (TSH2 - Tamb)) / cp_water \
-    + (alpha_water * layer_surface * (TSH0_2 - TSH2)) /cp_water \
-    - (alpha_water * layer_surface * (TSH2 - TSH2_1)) /cp_water)
+    - (-V_PSOS * VSHP_OP + V_PSOS - msto + msto * VSHS_OP + m2plus) * TSH2 + m2plus * TSH2_1 - (alpha_2 * (TSH2 - Tamb)) / cp_water)
 #m2minus = (-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP +m2plus)
 
 #layer2.1
 dotT2_1 = 1.0/m * ((-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP +m2plus) * TSH2 - m2plus * TSH2_1 - \
-    (-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP +m2plus) * TSH2_1 + m2plus * TSH2_2 \
-    - (alpha_sto * storage_surface * (TSH2_1 - Tamb)) / cp_water \
-    + (alpha_water * layer_surface * (TSH2 - TSH2_1)) /cp_water \
-    - (alpha_water * layer_surface * (TSH2_1 - TSH2_2)) /cp_water)
+    (-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP +m2plus) * TSH2_1 + m2plus * TSH2_2 - alpha_2_1 * (TSH2_1 - Tamb) / cp_water)
 
 #layer2.2
 dotT2_2 = 1.0/m * ((-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP +m2plus) * TSH2_1 - m2plus * TSH2_2 - \
-    (-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP +m2plus) * TSH2_2 + m2plus * TSH3 \
-    - (alpha_sto * storage_surface * (TSH2_2 - Tamb)) / cp_water \
-    + (alpha_water * layer_surface * (TSH2_1 - TSH2_2)) /cp_water \
-    - (alpha_water * layer_surface * (TSH2_2 - TSH3)) /cp_water)
+    (-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP +m2plus) * TSH2_2 + m2plus * TSH3 - alpha_2_2 * (TSH2_2 - Tamb) / cp_water)
 
 #third Layer
 dotT3 = 1.0/m * ((-V_PSOS * VSHP_OP + V_PSOS - msto + msto*VSHS_OP + m2plus) * TSH2_2 - m2plus * TSH3 \
-    - (-V_PSOS * VSHP_OP + V_PSOS - msto + msto * VSHS_OP  + m2plus) * TSH3 + m2plus * TSH3_1 \
-    - (alpha_sto * storage_surface * (TSH3 - Tamb)) / cp_water \
-    + (alpha_water * layer_surface * (TSH2_2 - TSH3)) /cp_water \
-    - (alpha_water * layer_surface * (TSH3 - TSH3_1)) /cp_water)
+    - (-V_PSOS * VSHP_OP + V_PSOS - msto + msto * VSHS_OP  + m2plus) * TSH3 + m2plus * TSH3_1 - (alpha_3 * (TSH3 - Tamb)) / cp_water)
 #m3minus = (-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP  +m3plus)## m3minus ist m2minus und m3plus ist m2plus
 
 #leyer3.1
 dotT3_1 = 1.0/m * ((-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP  +m2plus) * TSH3 - m2plus * TSH3_1 \
-    - (-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP  +m2plus) * TSH3_1 + m2plus * TSH3_2 \
-    - (alpha_sto * storage_surface * (TSH3_1 - Tamb)) / cp_water \
-    + (alpha_water * layer_surface * (TSH3 - TSH3_1)) /cp_water \
-    - (alpha_water * layer_surface * (TSH3_1 - TSH3_2)) /cp_water)
+    - (-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP  +m2plus) * TSH3_1 + m2plus * TSH3_2 - (alpha_3_1 * (TSH3_1 - Tamb)) / cp_water)
 
 #leyer3.2
 dotT3_2 = 1.0/m * ((-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP  +m2plus) * TSH3_1 - m2plus * TSH3_2 \
-    - (-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP  +m2plus) * TSH3_2 + m2plus * TSH1 \
-    - (alpha_sto * storage_surface * (TSH3_2 - Tamb)) / cp_water \
-    + (alpha_water * layer_surface * (TSH3_1 - TSH3_2)) /cp_water \
-    - (alpha_water * layer_surface * (TSH3_2 - TSH1)) /cp_water)
+    - (-V_PSOS*VSHP_OP +V_PSOS -msto +msto*VSHS_OP  +m2plus) * TSH3_2 + m2plus * TSH1 - (alpha_3_2 * (TSH3_2 - Tamb)) / cp_water)
 
 #fourth Layer
 dotT1 = 1.0/m * (-V_PSOS * VSHP_CL * TSH1 + (-V_PSOS * VSHP_OP + V_PSOS - msto + msto * VSHS_OP  + m2plus) * TSH3_2 \
-    - m2plus * TSH1 + msto * VSHS_CL * TCO_1 \
-    - (alpha_sto * storage_surface * (TSH1 - Tamb)) / cp_water \
-    - (alpha_floor * floor_surface * (TSH1 - Tfloor)) / cp_water \
-    + (alpha_water * layer_surface * (TSH3_2 - TSH1)) /cp_water)
+    - m2plus * TSH1 + msto * VSHS_CL * TCO_1 - (alpha_1 * (TSH1 - Tamb)) / cp_water)
 #=================================================================================================================================================
 
 
@@ -190,9 +147,8 @@ pe_setups = []
 # Start heating
 
 datatable = "data2017-01-19"
-int_start = [0, 5000, 10000, 15000, 20000, 25000]#, 30000, 35000]# #[45000,50000,55000,60000, 65000, 70000, 75000, 80000]##[0, 400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800, 5200, 5600, 6000]
-int_end = [4999, 9999, 14999, 19999, 24999, 29999]#, 34999, 39999] # #[49999, 54999, 59999, 64999, 69999, 74999, 79999, 86000] ##[399, 799, 1199, 1599, 1999, 2399, 2700, 3199, 3599, 3999, 4399, 4799, 5199, 5599, 5999, 6399]
-int_step = 5
+int_start = [0, 5000, 10000, 15000, 20000, 25000]
+int_end = [4999, 9999, 14999, 19999, 24999, 29999]
 
 data = pd.read_table("data_storage/10_layer/"+ datatable + ".csv", \
     delimiter=",", index_col=0)
@@ -265,8 +221,6 @@ for k,e in enumerate(int_start):
         pl.atleast_2d(ydata_4).T, pl.atleast_2d(ydata_5).T, pl.atleast_2d(ydata_6).T, pl.atleast_2d(ydata_7).T, pl.atleast_2d(ydata_8).T, \
         pl.atleast_2d(ydata_9).T,]) 
 
-    # wv = pl.ones(ydata.shape[0])
-    # wv[:int(ydata.shape[0]*0.1)] = 5
 
     pe_setups.append(cp.pe.LSq(system = system, time_points = time_points, \
         udata = udata, \
@@ -275,10 +229,10 @@ for k,e in enumerate(int_start):
         xinit = xinit)) #, \
         # wv = wv))
 
-##fuer einen Zeitraum
+##einen Zeitraum
 # pe_setups[0].run_parameter_estimation()#{"linear_solver": "ma57"})
 
-##fuer multiparameter
+##multiparameter
 mpe = cp.pe.MultiLSq(pe_setups)
 mpe.run_parameter_estimation({"linear_solver": "ma57"})
 # mpe.run_parameter_estimation()
@@ -292,22 +246,15 @@ pl.close("all")
 
 
 
-# print("alpha_0 = "+ str(pe_setups[0].estimated_parameters[0]))
-# print("alpha_2 = "+ str(pe_setups[0].estimated_parameters[1]))
-# print("alpha_3 = "+ str(pe_setups[0].estimated_parameters[2]))
-# print("alpha_1 = "+ str(pe_setups[0].estimated_parameters[3]))
 
-print("alpha_sto = "+ str(mpe.estimated_parameters[0]))
-print("alpha_floor = "+ str(mpe.estimated_parameters[1]))
-
-# print("alpha_0 = "+ str(mpe.estimated_parameters[0]))
-# print("alpha_2 = "+ str(mpe.estimated_parameters[1]))
-# print("alpha_3 = "+ str(mpe.estimated_parameters[2]))
-# print("alpha_1 = "+ str(mpe.estimated_parameters[3]))
-# print("alpha_0_1 = "+ str(mpe.estimated_parameters[4]))
-# print("alpha_0_2 = "+ str(mpe.estimated_parameters[5]))
-# print("alpha_2_1 = "+ str(mpe.estimated_parameters[6]))
-# print("alpha_2_2 = "+ str(mpe.estimated_parameters[7]))
-# print("alpha_3_1 = "+ str(mpe.estimated_parameters[8]))
-# print("alpha_3_2 = "+ str(mpe.estimated_parameters[9]))
+print("alpha_0 = "+ str(mpe.estimated_parameters[0]))
+print("alpha_2 = "+ str(mpe.estimated_parameters[1]))
+print("alpha_3 = "+ str(mpe.estimated_parameters[2]))
+print("alpha_1 = "+ str(mpe.estimated_parameters[3]))
+print("alpha_0_1 = "+ str(mpe.estimated_parameters[4]))
+print("alpha_0_2 = "+ str(mpe.estimated_parameters[5]))
+print("alpha_2_1 = "+ str(mpe.estimated_parameters[6]))
+print("alpha_2_2 = "+ str(mpe.estimated_parameters[7]))
+print("alpha_3_1 = "+ str(mpe.estimated_parameters[8]))
+print("alpha_3_2 = "+ str(mpe.estimated_parameters[9]))
 

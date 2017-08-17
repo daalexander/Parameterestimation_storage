@@ -97,8 +97,8 @@ pe_setups = []
 # Start heating
 
 datatable = "data2017-03-04"
-int_start = [0, 5000, 10000, 15000, 20000, 25000]#, 30000, 35000]# #[45000,50000,55000,60000, 65000, 70000, 75000, 80000]##[0, 400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800, 5200, 5600, 6000]
-int_end = [4999, 9999, 14999, 19999, 24999, 26999]#, 34999, 39999] # #[49999, 54999, 59999, 64999, 69999, 74999, 79999, 86000] ##[399, 799, 1199, 1599, 1999, 2399, 2700, 3199, 3599, 3999, 4399, 4799, 5199, 5599, 5999, 6399]
+int_start = [0, 5000, 10000, 15000, 20000, 25000]
+int_end = [4999, 9999, 14999, 19999, 24999, 26999]
 int_step = 5
 
 data = pd.read_table("data_storage/"+ datatable + ".csv", \
@@ -155,8 +155,7 @@ for k,e in enumerate(int_start):
 
     ydata = ca.horzcat([pl.atleast_2d(ydata_0).T, pl.atleast_2d(ydata_1).T, pl.atleast_2d(ydata_2).T, pl.atleast_2d(ydata_3).T,]) #ca.repmat(y1_5_init, (1, ydata.shape[0])).T])
 
-    # wv = pl.ones(ydata.shape[0])
-    # wv[:int(ydata.shape[0]*0.1)] = 5
+
 
     pe_setups.append(cp.pe.LSq(system = system, time_points = time_points, \
         udata = udata, \
@@ -165,7 +164,7 @@ for k,e in enumerate(int_start):
         xinit = xinit)) #, \
         # wv = wv))
 
-##fuer einen Zeitraum
+##einen Zeitraum
 # pe_setups[0].run_parameter_estimation()#{"linear_solver": "ma57"})
 
 ##fuer multiparameter
@@ -181,11 +180,6 @@ sim_est = cp.sim.Simulation(system = system, pdata = mpe.estimated_parameters)
 pl.close("all")
 
 
-
-# print("alpha_0 = "+ str(pe_setups[0].estimated_parameters[0]))
-# print("alpha_2 = "+ str(pe_setups[0].estimated_parameters[1]))
-# print("alpha_3 = "+ str(pe_setups[0].estimated_parameters[2]))
-# print("alpha_1 = "+ str(pe_setups[0].estimated_parameters[3]))
 
 print("alpha_0 = "+ str(mpe.estimated_parameters[0]))
 print("alpha_2 = "+ str(mpe.estimated_parameters[1]))
